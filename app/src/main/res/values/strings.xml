@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">JVM Test</string>
+    <string-array name="file_rw_items">
+        <item>File Management</item>
+        <item>Media Store</item>
+    </string-array>
+
+</resources>
