@@ -8,7 +8,7 @@
     tools:context=".ServiceControlActivity">
 
     <Button
-        android:id="@+id/buttonStartService"
+        android:id="@+id/buttonServiceStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -17,7 +17,7 @@
         android:text="Start service" />
 
     <Button
-        android:id="@+id/buttonStopService"
+        android:id="@+id/buttonServiceStop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -26,13 +26,59 @@
         android:text="Stop service" />
 
     <Button
-        android:id="@+id/buttonUpdateService"
+        android:id="@+id/buttonServiceBind"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Update" />
+        android:text="Bind service" />
+
+    <Button
+        android:id="@+id/buttonServiceUnbind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Unbind service" />
+
+
+    <Button
+        android:id="@+id/buttonServiceTickerStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Start Ticker" />
+
+    <Button
+        android:id="@+id/buttonServiceTickerStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Stop Ticker" />
+
+    <Button
+        android:id="@+id/buttonServiceForegroundStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Start Foreground" />
+
+    <Button
+        android:id="@+id/buttonServiceForegroundStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Stop Foreground" />
 
     <TextView
         android:id="@+id/textViewServiceCount"
@@ -44,14 +90,5 @@
         android:text="0"
         android:textAlignment="center"
         android:textSize="24sp" />
-
-    <Button
-        android:id="@+id/buttonServiceTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Test" />
 
 </LinearLayout>

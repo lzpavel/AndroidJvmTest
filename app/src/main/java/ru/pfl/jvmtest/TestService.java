@@ -12,7 +12,9 @@ import java.util.TimerTask;
 
 public class TestService extends Service {
 
-    MyBinder binder = new MyBinder();
+    MyBinder myBinder = new MyBinder();
+
+
 
     Timer timer;
     TimerTask timerTask;
@@ -33,7 +35,7 @@ public class TestService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         //throw new UnsupportedOperationException("Not yet implemented");
-        return binder;
+        return myBinder;
     }
 
     @Override

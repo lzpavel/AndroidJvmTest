@@ -25,24 +25,36 @@ import android.widget.TextView;
 
 public class ServiceControlActivity extends AppCompatActivity {
 
-    int i = 0;
+    Button buttonServiceStart;
+    Button buttonServiceStop;
+    Button buttonServiceBind;
+    Button buttonServiceUnbind;
+    Button buttonServiceTickerStart;
+    Button buttonServiceTickerStop;
+    Button buttonServiceForegroundStart;
+    Button buttonServiceForegroundStop;
+    TextView textViewServiceCount;
 
-    boolean bound = false;
     Intent intent;
     Intent intentTickerService;
     Intent intentTickerService2;
+    Intent intentBroadcast;
+
     ServiceConnection serviceConnection;
     TestService testService;
     TickerService tickerService;
+    TickerService2 tickerService2;
 
     Thread myThread;
     Boolean threadEn = false;
+    Boolean tickEn = false;
 
     int cnt = 0;
+    int i = 0;
+    boolean bound = false;
 
     TickBroadcastReceiver tickBroadcastReceiver = new TickBroadcastReceiver();
 
-    public TextView textViewServiceCount = null;
 
     //public static final String CHANNEL_ID = "101";
     private static final int NOTIFY_ID = 101;
@@ -55,104 +67,116 @@ public class ServiceControlActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_control);
 
-        Button buttonStartService = (Button) findViewById(R.id.buttonStartService);
-        Button buttonStopService = (Button) findViewById(R.id.buttonStopService);
-        Button buttonUpdateService = (Button) findViewById(R.id.buttonUpdateService);
+        buttonServiceStart = (Button) findViewById(R.id.buttonServiceStart);
+        buttonServiceStop = (Button) findViewById(R.id.buttonServiceStop);
+        buttonServiceBind = (Button) findViewById(R.id.buttonServiceBind);
+        buttonServiceUnbind = (Button) findViewById(R.id.buttonServiceUnbind);
+        buttonServiceTickerStart = (Button) findViewById(R.id.buttonServiceTickerStart);
+        buttonServiceTickerStop = (Button) findViewById(R.id.buttonServiceTickerStop);
+        buttonServiceForegroundStart = (Button) findViewById(R.id.buttonServiceForegroundStart);
+        buttonServiceForegroundStop = (Button) findViewById(R.id.buttonServiceForegroundStop);
         textViewServiceCount = (TextView) findViewById(R.id.textViewServiceCount);
-        Button buttonServiceTest = (Button) findViewById(R.id.buttonServiceTest);
 
         intent = new Intent(this, TestService.class);
         intentTickerService = new Intent(this, TickerService.class);
         intentTickerService2 = new Intent(this, TickerService2.class);
         intent = new Intent(this, NotificationService.class);
+        intentBroadcast = new Intent("ru.pfl.jvmtest.TickerService.Rx");
 
 
 
         serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                testService = ((TestService.MyBinder) service).getService();
-
+                tickerService2 = ((TickerService2.MyBinder) service).getService();
+                Log.d(LOG_TAG, "onServiceConnected");
                 bound = true;
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
+                Log.d(LOG_TAG, "onServiceDisconnected");
             }
         };
 
-        buttonStartService.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intentTickerService2.putExtra("TickEnable", true);
-                startService(intentTickerService2);
-                //i++;
-                //textViewServiceCount.setText(String.valueOf(i));
-                //startService(intent);
-                //bindService(intent, serviceConnection, 0);
-            }
+
+
+        buttonServiceStart.setOnClickListener(v -> {
+            startService(intentTickerService2);
         });
-        buttonStopService.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intentTickerService2.putExtra("TickEnable", false);
-                startService(intentTickerService2);
-                //i--;
-                //textViewServiceCount.setText(String.valueOf(i));
-                //unbindService(serviceConnection);
-                //stopService(intent);
-            }
-        });
-        buttonUpdateService.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textViewServiceCount.setText(String.valueOf(testService.cnt));
-            }
-        });
-        buttonServiceTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                threadEn = !threadEn;
-
-                if(threadEn) {
-                    startThread();
-                }
-
-                //SystemClock.sleep(1000);
-
-
-
-
-                //startService(intentNotification);
-                //startTicker();
-                //intentTickerService.putExtra("TickEnable", true);
-                //startService(intentTickerService);
-
-            }
+        buttonServiceStop.setOnClickListener(v -> {
+            stopService(intentTickerService2);
         });
 
+        buttonServiceBind.setOnClickListener(v -> {
+            bindService(intentTickerService2, serviceConnection, 0);
+        });
+
+        buttonServiceUnbind.setOnClickListener(v -> {
+            unbindService(serviceConnection);
+        });
+
+        buttonServiceTickerStart.setOnClickListener(v -> {
+            tickerService2.tickEn = true;
+            tickerService2.startTicker();
+        });
+
+        buttonServiceTickerStop.setOnClickListener(v -> {
+            tickerService2.tickEn = false;
+        });
+        buttonServiceForegroundStart.setOnClickListener(v -> {
+
+            tickerService2.startServiceForeground();
+        });
+        buttonServiceForegroundStop.setOnClickListener(v -> {
+            tickerService2.stopServiceForeground();
+        });
 
     }
 
-    void startThread() {
-        myThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (threadEn) {
-                    cnt++;
-                    textViewServiceCount.setText(String.valueOf(cnt));
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
-                }
-            }
-        });
-        myThread.start();
+
+    void showNotification() {
+        NotificationManager mNotificationManager;
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getApplicationContext(), "notify_001");
+        Intent ii =
+                new Intent(getApplicationContext(), this.getClass());
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(getApplicationContext(), 0, ii, 0);
+
+        //NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+        //bigText.bigText("Text");
+        //bigText.setBigContentTitle("Today's Bible Verse");
+        //bigText.setSummaryText("Text in detail");
+
+        mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
+        mBuilder.setContentTitle("Your Title");
+        mBuilder.setContentText("Your text");
+        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        //mBuilder.setStyle(bigText);
+
+        mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        // === Removed some obsoletes
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            String channelId = "Your_channel_id";
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_HIGH);
+            mNotificationManager.createNotificationChannel(channel);
+            mBuilder.setChannelId(channelId);
+        }
+
+
+
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     public void registerBroadcastReceiver() {
@@ -220,10 +244,13 @@ public class ServiceControlActivity extends AppCompatActivity {
         }*/
     }
 
+
+
     public class TickBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             textViewServiceCount.setText(intent.getStringExtra("TickVal"));
+            tickEn = true;
         }
     }
 }
